@@ -152,7 +152,7 @@ export function DealForm({
   }, [open, contactId, supabase]);
 
   async function handleSave() {
-    if (!title.trim() || !contactId || !stageId) {
+    if (!title.trim() || !stageId) {
       toast.error(t("toastRequired"));
       return;
     }
@@ -162,7 +162,7 @@ export function DealForm({
       title: title.trim(),
       value: parseFloat(value) || 0,
       currency,
-      contact_id: contactId,
+      contact_id: contactId || null,
       pipeline_id: pipelineId,
       stage_id: stageId,
       assigned_to: assignedTo || null,
@@ -270,8 +270,10 @@ export function DealForm({
             </div>
 
             <div className="grid gap-2">
-              <Label className="text-muted-foreground">{t("contact")}</Label>
+              <Label htmlFor="deal-contact" className="text-muted-foreground">{t("contact")}</Label>
               <select
+                id="deal-contact"
+                aria-describedby="deal-contact-help"
                 value={contactId}
                 onChange={(e) => setContactId(e.target.value)}
                 className="h-9 w-full rounded-lg border border-border bg-muted px-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -283,6 +285,10 @@ export function DealForm({
                   </option>
                 ))}
               </select>
+
+              <p id="deal-contact-help" className="text-xs text-muted-foreground">
+                {t("contactHelp")}
+              </p>
 
               {linkedConversation && (
                 <Link
@@ -439,7 +445,7 @@ export function DealForm({
               </Button>
               <Button
                 onClick={handleSave}
-                disabled={saving || !title.trim() || !contactId || !stageId}
+                disabled={saving || !title.trim() || !stageId}
                 className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 {saving ? t("saving") : deal ? t("saveChanges") : t("createDeal")}
